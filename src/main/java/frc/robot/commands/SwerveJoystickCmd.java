@@ -60,9 +60,9 @@ public class SwerveJoystickCmd extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double xSpeed = RobotContainer.Buttons.getWithDeadZone(xbox.getLeftX(), 0.1);
-    double ySpeed = RobotContainer.Buttons.getWithDeadZone(xbox.getLeftY(), 0.1);
-    double directionSpeed = RobotContainer.Buttons.getWithDeadZone(xbox.getRightX(), 0.1); // todd 8-22-23 * maxAngularRPS;
+    double ySpeed = RobotContainer.Buttons.getWithDeadZone(-xbox.getLeftX(), 0.1);
+    double xSpeed = RobotContainer.Buttons.getWithDeadZone(-xbox.getLeftY(), 0.1);
+    double directionSpeed = RobotContainer.Buttons.getWithDeadZone(-xbox.getRightX(), 0.1); // todd 8-22-23 * maxAngularRPS;
 
     xSpeed = xLimiter.calculate(xSpeed) * maxSpeedMPS;
     ySpeed = yLimiter.calculate(ySpeed)  * maxSpeedMPS;

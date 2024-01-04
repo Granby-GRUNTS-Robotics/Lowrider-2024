@@ -59,24 +59,22 @@ public final class Constants {
   public static final double RIGHT_BACK_RADIAN_OFFSET = Math.toRadians(147.92); //149.326217//202.236 //562.412; //-2.812; //-0.019949;
  
 
-  public static final boolean LEFT_FRONT_SPEED_IS_REVERSED = true; //false; //true;
-  public static final boolean RIGHT_FRONT_SPEED_IS_REVERSED = false; //true; //false;
-  public static final boolean LEFT_BACK_SPEED_IS_REVERSED = true; //false; //true;
-  public static final boolean RIGHT_BACK_SPEED_IS_REVERSED = false; //true; //false;
+  public static final boolean LEFT_FRONT_SPEED_IS_REVERSED = false; //false; //true;
+  public static final boolean RIGHT_FRONT_SPEED_IS_REVERSED = true; //true; //false;
+  public static final boolean LEFT_BACK_SPEED_IS_REVERSED = false; //false; //true;
+  public static final boolean RIGHT_BACK_SPEED_IS_REVERSED = true; //true; //false;
 
-  // when changed to true, driving forward and backward are okay. 
-  // BUT Left and right are reveresed 
-  // AND rotating does NOT work.  Wheels face inward
-  public static final boolean LEFT_FRONT_DIRECTION_IS_REVERSED = false;
-  public static final boolean RIGHT_FRONT_DIRECTION_IS_REVERSED = false;
-  public static final boolean LEFT_BACK_DIRECTION_IS_REVERSED = false;
-  public static final boolean RIGHT_BACK_DIRECTION_IS_REVERSED = false;
 
-  //Must stay true or offset angle will be the wrong direction and wheels will not be straignt on startup and driving
-  public static final boolean LEFT_FRONT_CANCODER_IS_REVERSED = true; // false;
-  public static final boolean RIGHT_FRONT_CANCODER_IS_REVERSED = true; // false;
-  public static final boolean LEFT_BACK_CANCODER_IS_REVERSED = true; // false;
-  public static final boolean RIGHT_BACK_CANCODER_IS_REVERSED = true; // false;
+  public static final boolean LEFT_FRONT_DIRECTION_IS_REVERSED = true;
+  public static final boolean RIGHT_FRONT_DIRECTION_IS_REVERSED = true;
+  public static final boolean LEFT_BACK_DIRECTION_IS_REVERSED = true;
+  public static final boolean RIGHT_BACK_DIRECTION_IS_REVERSED = true;
+
+  //Must stay false or offset angle will be the wrong direction and wheels will not be straignt on startup and driving
+  public static final boolean LEFT_FRONT_CANCODER_IS_REVERSED = false; // false;
+  public static final boolean RIGHT_FRONT_CANCODER_IS_REVERSED = false; // false;
+  public static final boolean LEFT_BACK_CANCODER_IS_REVERSED = false; // false;
+  public static final boolean RIGHT_BACK_CANCODER_IS_REVERSED = false; // false;
 
   public static final double wheelDiameter = Units.inchesToMeters(3.93);  // 4 inches =  .1016 Meters  // Orig was 3.75
   public static final double speedMotorGearRatio  =  (1 / 6.75);    //.148148
@@ -91,12 +89,12 @@ public final class Constants {
   public static final double directionEncoderRPMToRadsPS = directionEncoderRotationToRadian / 60;
   
   
-  public static final double kPTurning = 0.15; //what
+  public static final double kPTurning = .3; // 0.15; //how much p the turning motors get. anything > 1 makes the wheels shake
 
     ///**** NOTE: if physicalMaxSpeedMPS is too low the auto speeds are crazy fast and distances are off. .005 was NOT GOOD */
   public static final double physicalMaxSpeedMPS = 5; // 0.005; //0.07 before fly-in //is this a double? what should the value be?
   
-  /** This impacts seed fo spin/turning of robot. */
+  /** This impacts speed fo spin/turning of robot. */
   public static final double kPhysicalMaxAngularSpeedRadiansPerSecond = 2 * 2 * Math.PI; // 0.007 * 2 * Math.PI; //0.02 before flyin
 
   public static final double kTeleDriveMaxSpeedMetersPerSecond = physicalMaxSpeedMPS / 1.5;
@@ -105,25 +103,25 @@ public final class Constants {
   public static final double kTeleDriveMaxAngularAccelerationUnitsPerSecond = 4;
 
    // Start - Created from running Sysid and running test on 12-16-23
-  public static final double ksvolts = 0.11307;
-  public static final double kvVoltSecondsPerMeter = 2.7105;
-  public static final double kaVoltSecondsSquarePerMeter = 0.065426;
-  public static final double kPDriveVel = 0.010885;
+  //public static final double ksvolts = 0.11307;
+  //public static final double kvVoltSecondsPerMeter = 2.7105;
+  //public static final double kaVoltSecondsSquarePerMeter = 0.065426;
+  //public static final double kPDriveVel = 0.010885;
 
-  //////////// Trying path planner 12-16-23
+  ////////////  path planner 12-16-23
   public static final class Swerve {
     //public static final Translation2d flModuleOffset = new Translation2d(0.3175, 0.3175);
     public static final Translation2d flModuleOffset = new Translation2d(kWheelBase / 2, kTrackWidth / 2);
-    public static final Translation2d frModuleOffset = new Translation2d(0.3175, -0.3175);
-    public static final Translation2d blModuleOffset = new Translation2d(-0.3175, 0.3175);
-    public static final Translation2d brModuleOffset = new Translation2d(-0.3175, -0.3175);
+    //public static final Translation2d frModuleOffset = new Translation2d(0.3175, -0.3175);
+    //public static final Translation2d blModuleOffset = new Translation2d(-0.3175, 0.3175);
+    //public static final Translation2d brModuleOffset = new Translation2d(-0.3175, -0.3175);
 
-    public static final double maxModuleSpeed = 1; // orig 4.5 M/S Max speed for auto
+    public static final double maxModuleSpeed = 8;// 4.5; // orig 4.5 M/S Max speed for auto
 
   
   public static final HolonomicPathFollowerConfig pathFollowerConfig = new HolonomicPathFollowerConfig(
-      new PIDConstants(2, 1, 0), // Translation constants 
-      new PIDConstants(2, 0, 0), // Rotation constants 
+      new PIDConstants(5, 0, 0), // Translation constants 
+      new PIDConstants(6, 0, 0), // Rotation constants 
       maxModuleSpeed, 
       flModuleOffset.getNorm(), // Drive base radius (distance from center to furthest module) 
       new ReplanningConfig()
@@ -131,33 +129,20 @@ public final class Constants {
   }
   //////////////////////////////////////////
 
- // END - Created from running Sysid and running test on 12-16-23
 
-  /* public static final double kTeleDriveMaxAccelerationMetersPerSecond = physicalMaxSpeedMPS / 3;
-  public static final double kTeleDriveMaxAngularAccelerationRadiansPerSecond = kPhysicalMaxAngularSpeedRadiansPerSecond / 4; */
+
 
   public static final double kTrackWidth = Units.inchesToMeters(24.5); //distance between left and right wheels
   public static final double kWheelBase = Units.inchesToMeters(24.5); //distance between front and back wheels
+
   public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
-    //new Translation2d(kWheelBase / 2, kTrackWidth / 2),     // Front Left wheel position from center of robot
-    //new Translation2d(kWheelBase / 2, -kTrackWidth / 2),    // Front Right wheel postion
-    //new Translation2d(-kWheelBase / 2, kTrackWidth / 2),    // Back Left wheel postion
-    //new Translation2d(-kWheelBase / 2, -kTrackWidth / 2)    // Back Right wheel position 
-
-     //orig values:
-    new Translation2d(kWheelBase / 2, -kTrackWidth / 2),   // Front Right wheel position from center of robot
-    new Translation2d(kWheelBase / 2, kTrackWidth / 2),    // Front Left wheel postion
-    new Translation2d(-kWheelBase / 2, -kTrackWidth / 2),  // Back Right wheel postion
-    new Translation2d(-kWheelBase / 2, kTrackWidth / 2)    // Back Left wheel position 
-  );
-
-  public static final SwerveDriveKinematics kDriveKinematicsAuto = new SwerveDriveKinematics(
     new Translation2d(kWheelBase / 2, kTrackWidth / 2),     // Front Left wheel position from center of robot
     new Translation2d(kWheelBase / 2, -kTrackWidth / 2),    // Front Right wheel postion
     new Translation2d(-kWheelBase / 2, kTrackWidth / 2),    // Back Left wheel postion
-    new Translation2d(-kWheelBase / 2, -kTrackWidth / 2)    // Back Right wheel position
+    new Translation2d(-kWheelBase / 2, -kTrackWidth / 2)    // Back Right wheel position 
 
   );
+
 
   public static final class AutoConstants {
     public static final double kMaxSpeedMetersPerSecond = 1; // physicalMaxSpeedMPS - too slow. Jumps arounds; //3 - too fast; // Constants.physicalMaxSpeedMPS / 10; //4;
@@ -167,27 +152,13 @@ public final class Constants {
     
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI; // / 6; //4;
 
-    public static final double kPXController = .15; // .15; //.5; // 1.5;
-    public static final double kPYController = .15; //.15; //.5; // 1.5;
-    public static final double kPThetaController = .005; //.15; //= 1;  //= 3; //Power for robot to spin in auto
-
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = 
             new TrapezoidProfile.Constraints(
                     kMaxAngularSpeedRadiansPerSecond,
                     kMaxAngularAccelerationRadiansPerSecondSquared);
 }
 
-public static final class TrajectoryConstants {
 
-  public static final String New_Path = "New Path";
-  public static final String New_Path_Copy = "New Path Copy";
-
-  public static final double MAX_SPEED = 1;
-  public static final double MAX_ACCELERATION = 1;
-  public static final double DEPLOYED_X_CONTROLLER_P = .015; // .35;
-  public static final double DEPLOYED_Y_CONTROLLER_P = .015; //.35;
-  public static final double DEPLOYED_THETA_CONTROLLER_P = .08;
-}
 
 
 }

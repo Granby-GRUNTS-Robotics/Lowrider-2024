@@ -12,6 +12,7 @@ import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
   import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -74,8 +75,13 @@ public class SwerveSubsystem extends SubsystemBase {
 
   private final Pigeon2 gyro = new Pigeon2(Constants.PIGEON_ID);
 
+   //Create Odometer for swerve drive
+  private SwerveDriveOdometry odometer;
+
   //////////// Trying path planner 12-16-23
-  //private SwerveDriveKinematics kinematics; // Trying Pathplanner
+  private SwerveDriveKinematics kinematics;  // Trying Pathplanner
+
+
 
 
   // Return position of the swerve module for odometry
@@ -100,8 +106,7 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 /////////////////////////////////////////////////
 
-  //Create Odometer for swerve drive
-  private SwerveDriveOdometry odometer;
+ 
 
   //private final SwerveDrivePoseEstimator odometry;  // Odemeter for when we have vision to help drive the robot
 
@@ -115,11 +120,28 @@ public class SwerveSubsystem extends SubsystemBase {
   gyro.configFactoryDefault();
   zeroGyro();
 
+   kinematics = new SwerveDriveKinematics(
+    new Translation2d(Constants.kWheelBase / 2, Constants.kTrackWidth / 2),     // Front Left wheel position from center of robot
+    new Translation2d(Constants.kWheelBase / 2, -Constants.kTrackWidth / 2),    // Front Right wheel postion
+    new Translation2d(-Constants.kWheelBase / 2, Constants.kTrackWidth / 2),    // Back Left wheel postion
+    new Translation2d(-Constants.kWheelBase / 2, -Constants.kTrackWidth / 2)    // Back Right wheel position
+  );
 
-  odometer = new SwerveDriveOdometry(Constants.kDriveKinematics,
-    getHeadingRot2d(), 
-    getModulePosition(),
-    new Pose2d()); 
+   // kinematics = new SwerveDriveKinematics(
+   // new Translation2d(Constants.kWheelBase / 2, -Constants.kTrackWidth / 2),     // Front Right wheel position from center of robot
+   // new Translation2d(Constants.kWheelBase / 2, Constants.kTrackWidth / 2),    // Front Left wheel postion
+   // new Translation2d(-Constants.kWheelBase / 2, -Constants.kTrackWidth / 2),    // Back Right wheel postion
+   // new Translation2d(-Constants.kWheelBase / 2, Constants.kTrackWidth / 2)    // Back Left wheel position
+  //);
+
+  odometer = new SwerveDriveOdometry(kinematics,
+    getRotation2d(), 
+    getModulePosition()); 
+
+    //odometer = new SwerveDriveOdometry(kinematics,
+    //getHeadingRot2d(), 
+    //getModulePosition(),
+    //new Pose2d()); 
 
     //////////// Trying path planner 12-16-23
  // kinematics = new SwerveDriveKinematics(
@@ -128,6 +150,8 @@ public class SwerveSubsystem extends SubsystemBase {
   //    Constants.Swerve.blModuleOffset, 
   //    Constants.Swerve.brModuleOffset
   //  );
+
+
 
   // Configure AutoBuilder
   AutoBuilder.configureHolonomic(
@@ -176,10 +200,10 @@ public void resetOdometry(Pose2d pose) {
 
 public void resetAllEncoders()
 {
- frontRight.resetEncoders();
- frontLeft.resetEncoders();
- backRight.resetEncoders();
- backLeft.resetEncoders();
+  frontLeft.resetEncoders();
+  frontRight.resetEncoders();
+  backLeft.resetEncoders();
+  backRight.resetEncoders();
  }
 
   public double  getRoll()
@@ -188,9 +212,9 @@ public void resetAllEncoders()
   }
 
   public void zeroGyro() {
-    //gyro.setYaw(0);
+    gyro.setYaw(0);
     // gyroOffset = (DriverStation.getAlliance() == Alliance.Blue ? 0 : 180) % 360;
-    gyro.setYaw(90);
+    //gyro.setYaw(90);
   }
 
   @Override
@@ -252,15 +276,14 @@ public void resetAllEncoders()
  //////////// Trying path planner 12-16-23
   public ChassisSpeeds getSpeeds() {
     //return kinematics.toChassisSpeeds(getModuleStates());
-    return Constants.kDriveKinematics.toChassisSpeeds(getModuleStates());
+    return kinematics.toChassisSpeeds(getModuleStates());
   }
 
   public void driveRobotRelative(ChassisSpeeds robotRelativeSpeeds) {
     //ChassisSpeeds targetSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(robotRelativeSpeeds, getRotation2d());
     ChassisSpeeds targetSpeeds = ChassisSpeeds.discretize(robotRelativeSpeeds, .02);
 
-    //SwerveModuleState[] targetStates = kinematics.toSwerveModuleStates(targetSpeeds);
-    SwerveModuleState[] targetStates = Constants.kDriveKinematics.toSwerveModuleStates(targetSpeeds);
+    SwerveModuleState[] targetStates = kinematics.toSwerveModuleStates(targetSpeeds);
     setModuleStates(targetStates);
   }
 ////////////////////////////////////////
