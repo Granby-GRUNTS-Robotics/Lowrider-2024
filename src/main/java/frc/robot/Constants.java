@@ -13,7 +13,10 @@ import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
@@ -76,7 +79,7 @@ public final class Constants {
   public static final boolean LEFT_BACK_CANCODER_IS_REVERSED = false; // false;
   public static final boolean RIGHT_BACK_CANCODER_IS_REVERSED = false; // false;
 
-  public static final double wheelDiameter = Units.inchesToMeters(3.93);  // 4 inches =  .1016 Meters  // Orig was 3.75
+  public static final double wheelDiameter = Units.inchesToMeters(3.75);  // 4 inches =  .1016 Meters  // Orig was 3.75
   public static final double speedMotorGearRatio  =  (1 / 6.75);    //.148148
   public static final double directionMotorGearRatio =  (1 / 21.4286);   //.04667
   
@@ -120,7 +123,7 @@ public final class Constants {
 
   
   public static final HolonomicPathFollowerConfig pathFollowerConfig = new HolonomicPathFollowerConfig(
-      new PIDConstants(5, 0, 0), // Translation constants 
+      new PIDConstants(5, 0, 0), // Translation constants   5
       new PIDConstants(6, 0, 0), // Rotation constants 
       maxModuleSpeed, 
       flModuleOffset.getNorm(), // Drive base radius (distance from center to furthest module) 
@@ -142,6 +145,24 @@ public final class Constants {
     new Translation2d(-kWheelBase / 2, -kTrackWidth / 2)    // Back Right wheel position 
 
   );
+
+  public static class VisionConstants {
+
+    /**
+     * Physical location of the camera on the robot, relative to the center of the robot.
+     */
+    public static final Transform3d CAMERA_TO_ROBOT =
+        new Transform3d(new Translation3d(-0.3425, 0.0, -0.233), new Rotation3d());
+    public static final Transform3d ROBOT_TO_CAMERA = CAMERA_TO_ROBOT.inverse();
+  }
+
+  public static class Limelight {
+    public static final int APRIL_TAG_PIPELINE_INDEX = 0;
+    public static final int RETRO_REFLECTIVE_TAPE_PIPELINE_INDEX = 1;
+
+    public static final String limelightName = "limelight3";
+
+  }
 
 
   public static final class AutoConstants {

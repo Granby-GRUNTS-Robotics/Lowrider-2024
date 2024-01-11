@@ -4,9 +4,14 @@
 
 package frc.robot.subsystems;
 
+import java.util.List;
+import java.util.function.BooleanSupplier;
+
 import com.ctre.phoenix.sensors.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
-
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
 import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -19,6 +24,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
   import edu.wpi.first.math.kinematics.SwerveModulePosition;
   import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -127,6 +134,8 @@ public class SwerveSubsystem extends SubsystemBase {
     new Translation2d(-Constants.kWheelBase / 2, -Constants.kTrackWidth / 2)    // Back Right wheel position
   );
 
+
+
    // kinematics = new SwerveDriveKinematics(
    // new Translation2d(Constants.kWheelBase / 2, -Constants.kTrackWidth / 2),     // Front Right wheel position from center of robot
    // new Translation2d(Constants.kWheelBase / 2, Constants.kTrackWidth / 2),    // Front Left wheel postion
@@ -160,6 +169,17 @@ public class SwerveSubsystem extends SubsystemBase {
     this::getSpeeds, 
     this::driveRobotRelative, 
     Constants.Swerve.pathFollowerConfig, 
+    () -> {
+                    // For 2024 Game: Boolean supplier that controls when the path will be mirrored for the red alliance
+                    // This will flip the path being followed to the red side of the field.
+                    // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+                    var alliance = DriverStation.getAlliance();
+                    if (alliance.isPresent()) {
+                        return alliance.get() == DriverStation.Alliance.Red;
+                    }
+                    return false;
+                },
     this
   ); 
 
@@ -272,6 +292,9 @@ public void resetAllEncoders()
     backRight.setDesiredState(desiredStates[3]);
   }
 
+    public SwerveDriveKinematics getKinematics() {
+    return kinematics;
+   }
  
  //////////// Trying path planner 12-16-23
   public ChassisSpeeds getSpeeds() {
@@ -287,4 +310,81 @@ public void resetAllEncoders()
     setModuleStates(targetStates);
   }
 ////////////////////////////////////////
+
+//// Button commands for swerve drive
+
+ // This example will simply move the robot 2m forward of its current position
+public void ZeroHeading(){
+      Pose2d currentPose = getPose();
+      
+      // The rotation component in these poses represents the direction of travel
+      Pose2d startPos = new Pose2d(currentPose.getTranslation(), new Rotation2d());
+      Pose2d endPos = new Pose2d(currentPose.getTranslation().plus(new Translation2d(1.0, 0.0)), new Rotation2d());
+
+      List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(startPos, endPos);
+      PathPlannerPath path = new PathPlannerPath(
+        bezierPoints, 
+        new PathConstraints(
+          1.0, 1.0, 
+          Units.degreesToRadians(360), Units.degreesToRadians(540)
+        ),  
+        new GoalEndState(0.0, currentPose.getRotation())
+      );
+
+      AutoBuilder.followPath(path).schedule();
+    }
+
+public void FaceLeft(){
+      Pose2d currentPose = getPose();
+      
+      // The rotation component in these poses represents the direction of travel
+      Pose2d startPos = new Pose2d(currentPose.getTranslation(), new Rotation2d());
+      Pose2d endPos = new Pose2d(currentPose.getTranslation().plus(new Translation2d(0.1, 0.0)), new Rotation2d());
+
+      List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(startPos, endPos);
+      PathPlannerPath path = new PathPlannerPath(
+        bezierPoints, 
+        new PathConstraints(
+          1.0, 1.0, 
+          Units.degreesToRadians(360), Units.degreesToRadians(540)
+        ),  
+        new GoalEndState(0.0, new Rotation2d().plus(Rotation2d.fromDegrees(90)))
+      );
+
+      AutoBuilder.followPath(path).schedule();
+    }
+
+public void FaceRight(){
+      Pose2d currentPose = getPose();
+      
+      // The rotation component in these poses represents the direction of travel
+      Pose2d startPos = new Pose2d(currentPose.getTranslation(), new Rotation2d());
+      Pose2d endPos = new Pose2d(currentPose.getTranslation().plus(new Translation2d(0.1, 0.0)), new Rotation2d());
+
+      List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(startPos, endPos);
+      PathPlannerPath path = new PathPlannerPath(
+        bezierPoints, 
+        new PathConstraints(
+          1.0, 1.0, 
+          Units.degreesToRadians(360), Units.degreesToRadians(540)
+        ),  
+        new GoalEndState(0.0, new Rotation2d().plus(Rotation2d.fromDegrees(270)))
+      );
+
+      AutoBuilder.followPath(path).schedule();
+    }
+
+    public void PathFind(){
+    AutoBuilder.pathfindToPose(
+      new Pose2d(14.0, 6.5, Rotation2d.fromDegrees(0)), 
+      new PathConstraints(
+        1.0, 1.0, 
+        Units.degreesToRadians(360), Units.degreesToRadians(540)
+      ), 
+      0, 
+      2.0
+    );
+    }
+    
+
 }

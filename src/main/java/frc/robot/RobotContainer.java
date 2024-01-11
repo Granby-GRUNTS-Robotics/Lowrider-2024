@@ -5,10 +5,16 @@
 package frc.robot;
 
 import frc.robot.Constants.AutoConstants;
+import frc.robot.Constants.Limelight;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.subsystems.LEDs;
+import frc.robot.subsystems.PoseEstimatorSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.LimeLight;
+import frc.robot.subsystems.PoseEstimatorSubsystem;
+
+
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -61,35 +67,35 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
+  public static final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
   private final XboxController xboxController = new XboxController(0);
   public static final CANifier CANIFIER = new CANifier(OperatorConstants.CANIFIER_ID);
   private final SendableChooser<Command> autoChooser;
 
-  // Replace with CommandPS4Controller or CommandJoystick if needed
-  //private final CommandXboxController m_driverController =
-      //new CommandXboxController(OperatorConstants.kDriverControllerPort);
-  
-      //SendableChooser<Command> autoChooser = new SendableChooser<>();
+  public static final LimeLight limeLight  = new LimeLight();
+  public static final PoseEstimatorSubsystem poseSubsystem = new PoseEstimatorSubsystem(swerveSubsystem, limeLight);
 
-      //private static AutoBuilder swerveAutoBuilder;
+
+
+   // Namee Swerve Driver's buttons
+   public static JoystickButton forwardOneMeter;  // Have robot point straight forward ( Away from driverstation)
+   public static JoystickButton faceLeft;
+   public static JoystickButton faceRight;
+   public static JoystickButton resetOdometryButton;
+
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     swerveSubsystem.setDefaultCommand(new SwerveJoystickCmd(swerveSubsystem, xboxController, true));
     
+        // Link the Swerve Driver's button names to their number on the controller
+        forwardOneMeter = new JoystickButton(xboxController, 1);
+        faceLeft = new JoystickButton(xboxController, 5);
+        faceRight = new JoystickButton(xboxController, 6);
+
 
     // Register Named Commands
      //NamedCommands.registerCommand("New Path", getAutonomousCommand());
-
-
-
-     //autoChooser = new SendableChooser<Command>();
-
-     //autoChooser.setDefaultOption("New Path Copy", new New_Path_Copy(swerveSubsystem));
-     //autoChooser.addOption("New Path", new New_Path(swerveSubsystem));
-     //autoChooser.addOption("New Path Copy", new New_Path_Copy(swerveSubsystem));
-    // SmartDashboard.putData("Auto chooser", autoChooser);
 
 
     // Configure the trigger bindings
@@ -130,19 +136,10 @@ public class RobotContainer {
    */
   private void configureBindings() {
 
-     //////////// Trying path planner 12-16-23
-   // Add a button to run the example auto to SmartDashboard, this will also be in the auto chooser built above
-   //SmartDashboard.putData("New Path", new PathPlannerAuto("New Path"));
-   
-   // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-  /// new Trigger(m_exampleSubsystem::exampleCondition)
-  /// .onTrue(new ExampleCommand(m_exampleSubsystem));
+    forwardOneMeter.whileTrue(new InstantCommand(() -> swerveSubsystem.ZeroHeading()));
+    faceLeft.whileTrue(new InstantCommand(() -> swerveSubsystem.FaceLeft()));
+    faceRight.whileTrue(new InstantCommand(() -> swerveSubsystem.FaceRight()));
 
-// Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-// cancelling on release.
-////m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
-
-    ///////////////////////////////////////////
   }
 
   /**
