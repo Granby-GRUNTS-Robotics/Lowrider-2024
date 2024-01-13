@@ -56,10 +56,10 @@ public final class Constants {
 
   public static final int PIGEON_ID = 1;
 
-  public static final double LEFT_FRONT_RADIAN_OFFSET = Math.toRadians(18.457); //18.6328125 //285.908 //-1.318; //-0.023003;
-  public static final double RIGHT_FRONT_RADIAN_OFFSET = Math.toRadians(144.932); //143.701171875 //349.198 //-10.898; //2.021; //0.035273;
-  public static final double LEFT_BACK_RADIAN_OFFSET = Math.toRadians(10.283); //10.4589 //88.594 //88.682; //-1.143; //-0.019949;
-  public static final double RIGHT_BACK_RADIAN_OFFSET = Math.toRadians(147.92); //149.326217//202.236 //562.412; //-2.812; //-0.019949;
+  public static final double LEFT_FRONT_RADIAN_OFFSET = Math.toRadians(19.424); //18.6328125 //285.908 //-1.318; //-0.023003;
+  public static final double RIGHT_FRONT_RADIAN_OFFSET = Math.toRadians(144.404); //143.701171875 //349.198 //-10.898; //2.021; //0.035273;
+  public static final double LEFT_BACK_RADIAN_OFFSET = Math.toRadians(9.229); //10.4589 //88.594 //88.682; //-1.143; //-0.019949;
+  public static final double RIGHT_BACK_RADIAN_OFFSET = Math.toRadians(148.975); //149.326217//202.236 //562.412; //-2.812; //-0.019949;
  
 
   public static final boolean LEFT_FRONT_SPEED_IS_REVERSED = false; //false; //true;

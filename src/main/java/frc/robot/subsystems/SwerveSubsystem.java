@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.function.BooleanSupplier;
 
 import com.ctre.phoenix.sensors.Pigeon2;
+//import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
